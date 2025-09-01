@@ -79,10 +79,13 @@ st.markdown("""
 3. **Interactúa con las gráficas:** usa el hover para valores exactos, zoom y la **leyenda** para mostrar/ocultar series.  
 4. **Revisa las métricas** bajo cada gráfico para un resumen inmediato.  
 5. **Explora el mapa de calor** (en *Por Playa > Mensual*) para detectar estacionalidad específica.
-
-**Tip estratégico 🧠**  
-Cruza los resultados de **📅 Día de la Semana** (promedios y variabilidad) con el **ranking por playa** del periodo seleccionado.  
-Esto permite **priorizar recursos** (staff, limpieza, seguridad) en **días y playas críticas** con mayor impacto.
 """)
 
 st.divider()
+
+st.subheader("🎨 Elementos visuales")
+st.markdown("""
+- Uso moderado de **emojis** para orientar la navegación sin distraer.  
+- Estructura con **encabezados**, **listas** y **separadores** para lectura escaneable.  
+- Etiquetas, meses y días en **español** para coherencia con el contexto local.
+""")
