@@ -86,13 +86,3 @@ Esto permite **priorizar recursos** (staff, limpieza, seguridad) en **días y pl
 """)
 
 st.divider()
-
-###################################
-# Elementos visuales y legibilidad
-###################################
-st.subheader("🎨 Elementos visuales")
-st.markdown("""
-- Uso moderado de **emojis** para orientar la navegación sin distraer.  
-- Estructura con **encabezados**, **listas** y **separadores** para lectura escaneable.  
-- Etiquetas, meses y días en **español** para coherencia con el contexto local.
-""")
