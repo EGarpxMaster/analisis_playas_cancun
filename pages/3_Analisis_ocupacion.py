@@ -4,6 +4,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import calendar
 import numpy as np
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA = ROOT / "datos" / "ocupacion_playas_cancun.csv"
+
 
 st.set_page_config(page_title="Análisis de Ocupación de Playas", page_icon="🏖️", layout="wide")
 st.title("🏖️ Dashboard de Análisis de Ocupación de Playas")
@@ -11,26 +16,43 @@ st.title("🏖️ Dashboard de Análisis de Ocupación de Playas")
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv("datos/ocupacion_playas_cancun_clean.csv")
-        df['fecha'] = pd.to_datetime(df['fecha'], dayfirst=True, errors='coerce')
-        df = df.dropna(subset=['fecha'])
-        
-        # Mapeo de días
+        # Lee 'fecha' como texto para controlar el parseo nosotros
+        df = pd.read_csv(DATA, dtype={"fecha": "string"})
+
+        # Normaliza separadores y espacios (por si vienen con '-' o '.')
+        s = df["fecha"].str.strip().str.replace(r"[-.]", "/", regex=True)
+
+        # Paso 1: intenta dd/mm/yyyy
+        f = pd.to_datetime(s, format="%d/%m/%Y", errors="coerce")
+
+        # Paso 2 (solo donde falló): intenta dd/mm/yy
+        m = f.isna()
+        if m.any():
+            f.loc[m] = pd.to_datetime(s[m], format="%d/%m/%y", errors="coerce")
+
+        # Si aún quedaran NaT, puedes agregar más formatos aquí:
+        # m2 = f.isna()
+        # f.loc[m2] = pd.to_datetime(s[m2], format="%Y/%m/%d", errors="coerce")
+
+        df["fecha"] = f
+        df = df.dropna(subset=["fecha"])
+
+        # Derivados
         dias_semana_es = {
-            'Monday': 'Lunes',
-            'Tuesday': 'Martes', 
-            'Wednesday': 'Miércoles',
-            'Thursday': 'Jueves',
-            'Friday': 'Viernes',
-            'Saturday': 'Sábado',
-            'Sunday': 'Domingo'
+            0: "Lunes", 1: "Martes", 2: "Miércoles", 3: "Jueves",
+            4: "Viernes", 5: "Sábado", 6: "Domingo"
         }
-        
-        df['dia_semana'] = df['fecha'].dt.day_name().map(dias_semana_es)
-        df['año'] = df['fecha'].dt.year
-        df['mes'] = df['fecha'].dt.month
-        df['mes_nombre'] = df['fecha'].dt.month_name()
-        
+        df["año"] = df["fecha"].dt.year
+        df["mes"] = df["fecha"].dt.month
+        df["dia_semana"] = df["fecha"].dt.weekday.map(dias_semana_es)
+
+        # Nombre de mes en español (evita depender del locale del sistema)
+        meses_es = {
+            1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",
+            7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"
+        }
+        df["mes_nombre"] = df["mes"].map(meses_es)
+
         return df
     except Exception as e:
         st.error(f"Error al cargar los datos: {str(e)}")
