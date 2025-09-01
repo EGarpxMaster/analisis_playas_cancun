@@ -10,4 +10,3 @@ st.write("Los datos que exploraremos están disponibles en la siguiente tabla:")
 
 df = pd.read_csv("datos/ocupacion_playas_cancun_clean.csv")
 st.dataframe(df)
-

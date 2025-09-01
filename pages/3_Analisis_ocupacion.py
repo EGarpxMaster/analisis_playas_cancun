@@ -11,7 +11,7 @@ st.title("🏖️ Dashboard de Análisis de Ocupación de Playas")
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv("../Datos/ocupacion_playas_cancun_clean.csv")
+        df = pd.read_csv("datos/ocupacion_playas_cancun_clean.csv")
         df['fecha'] = pd.to_datetime(df['fecha'], dayfirst=True, errors='coerce')
         df = df.dropna(subset=['fecha'])
         
