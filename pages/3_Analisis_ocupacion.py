@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "datos" / "ocupacion_playas_cancun.csv"
 
 
-st.set_page_config(page_title="Análisis de Ocupación de Playas", page_icon="🏖️", layout="wide")
-st.title("🏖️ Dashboard de Análisis de Ocupación de Playas")
+st.set_page_config(page_title="Análisis de Ocupación de Playas", layout="wide")
+st.title("Dashboard de Análisis de Ocupación de Playas")
 
 @st.cache_data
 def load_data():
@@ -46,7 +46,7 @@ def load_data():
         df["mes"] = df["fecha"].dt.month
         df["dia_semana"] = df["fecha"].dt.weekday.map(dias_semana_es)
 
-        # Nombre de mes en español (evita depender del locale del sistema)
+        # Nombre de mes en español
         meses_es = {
             1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",
             7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"
@@ -63,17 +63,17 @@ df = load_data()
 
 if df is not None:
     # Sidebar para navegación
-    st.sidebar.title("📊 Navegación")
+    st.sidebar.title("Navegación")
     seccion = st.sidebar.selectbox(
         "Selecciona el análisis:",
-        ["📈 Análisis Temporal", "🏖️ Análisis por Playa", "📅 Análisis por Día de la Semana"]
+        ["Análisis Temporal", "Análisis por Playa", "Análisis por Día de la Semana"]
     )
     
     # ======================
     # SECCIÓN 1: ANÁLISIS TEMPORAL
     # ======================
-    if seccion == "📈 Análisis Temporal":
-        st.header("📈 Análisis Temporal Global")
+    if seccion == "Análisis Temporal":
+        st.header("Análisis Temporal")
         
         col1, col2, col3 = st.columns([2, 2, 2])
         
@@ -119,7 +119,7 @@ if df is not None:
                 with col1:
                     st.metric("Total", f"{serie['ocupacion'].sum():,}")
                 with col2:
-                    st.metric("Promedio Diario", f"{serie['ocupacion'].mean():.0f}")
+                    st.metric("Promedio Diario", f"{serie['ocupacion'].mean():,.0f}")
                 with col3:
                     st.metric("Máximo", f"{serie['ocupacion'].max():,}")
                 with col4:
@@ -160,7 +160,7 @@ if df is not None:
                 with col1:
                     st.metric("Total Anual", f"{serie['ocupacion'].sum():,}")
                 with col2:
-                    st.metric("Promedio Mensual", f"{serie['ocupacion'].mean():.0f}")
+                    st.metric("Promedio Mensual", f"{serie['ocupacion'].mean():,.0f}")
                 with col3:
                     st.metric("Mejor Mes", f"{serie.loc[serie['ocupacion'].idxmax(), 'mes_nombre']}")
                 with col4:
@@ -193,7 +193,7 @@ if df is not None:
             with col1:
                 st.metric("Total Histórico", f"{serie['ocupacion'].sum():,}")
             with col2:
-                st.metric("Promedio Anual", f"{serie['ocupacion'].mean():.0f}")
+                st.metric("Promedio Anual", f"{serie['ocupacion'].mean():,.0f}")
             with col3:
                 st.metric("Mejor Año", f"{serie.loc[serie['ocupacion'].idxmax(), 'año']}")
             with col4:
@@ -326,18 +326,17 @@ if df is not None:
     # ======================
     else:  # Análisis por Día de la Semana
         st.header("📅 Análisis por Día de la Semana")
-        
         # Filtros opcionales
         col1, col2 = st.columns(2)
         with col1:
             años_disponibles = sorted(df['año'].unique())
-            año_filtro = st.selectbox("Filtrar por año (opcional):", ['Todos'] + años_disponibles)
+            año_filtro = st.selectbox("Filtrar por año:", ['Todos'] + años_disponibles)
         
         with col2:
             if año_filtro != 'Todos':
                 meses_disponibles = sorted(df[df['año'] == año_filtro]['mes'].unique())
                 mes_filtro = st.selectbox(
-                    "Filtrar por mes (opcional):", 
+                    "Filtrar por mes:", 
                     ['Todos'] + [calendar.month_name[m] for m in meses_disponibles],
                     key="dia_semana_mes"
                 )
